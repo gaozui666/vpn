@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>极乐帝国 · 科幻纪元</title>
+    <style>
+        :root {
+            --bg-deep: #02040c;
+            --bg-panel: #0a0f1a;
+            --bg-card: rgba(10, 15, 28, 0.6);
+            --border-glow: rgba(0, 240, 255, 0.25);
+            --gold: #d4af37;
+            --gold-bright: #f0da90;
+            --cyan: #00e5ff;
+            --cyan-dim: #00b8d4;
+            --text-primary: #eaeef2;
+            --text-secondary: #9aa9b7;
+            --text-muted: #5a6b7a;
+            --accent-gradient: linear-gradient(135deg, #d4af37 0%, #f9e076 50%, #b8860b 100%);
+            --cyan-gradient: linear-gradient(135deg, #00e5ff, #006994);
+            --glass-bg: rgba(8, 12, 24, 0.55);
+            --glass-border: 1px solid rgba(0, 240, 255, 0.18);
+            --glow-gold: 0 0 18px rgba(212, 175, 55, 0.5);
+            --glow-cyan: 0 0 22px rgba(0, 229, 255, 0.4);
+            --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+            --card-hover-shadow: 0 12px 40px rgba(0, 229, 255, 0.25);
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            --radius-xl: 32px;
+            --max-width: 1200px;
+            --nav-height: 56px;
+            --transition-smooth: cubic-bezier(0.22, 0.61, 0.36, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            font-family: 'SF Pro Display', 'Helvetica Neue', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: var(--bg-deep);
+            color: var(--text-primary);
+            line-height: 1.5;
+            overflow-x: hidden;
+            letter-spacing: -0.01em;
+        }
+
+        /* 全局扫描线 */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            background: repeating-linear-gradient(0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(0, 240, 255, 0.012) 2px,
+                    rgba(0, 240, 255, 0.012) 4px);
+            animation: scanlines 8s linear infinite;
+        }
+        @keyframes scanlines {
+            0% {
+                transform: translateY(0);
+            }
+            100% {
+                transform: translateY(4px);
+            }
+        }
+
+        /* ============ 导航栏 ============ */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            height: var(--nav-height);
+            transition: all 0.4s var(--transition-smooth);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 24px;
+            background: transparent;
+        }
+        .navbar.scrolled {
+            background: rgba(4, 6, 16, 0.78);
+            backdrop-filter: saturate(180%) blur(24px);
+            -webkit-backdrop-filter: saturate(180%) blur(24px);
+            border-bottom: 1px solid rgba(0, 229, 255, 0.15);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.8);
+        }
+        .navbar-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            max-width: var(--max-width);
+            gap: 16px;
+        }
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: #e0e8f0;
+            transition: opacity 0.3s;
+            flex-shrink: 0;
+        }
+        .nav-brand:hover {
+            opacity: 0.8;
+        }
+        .nav-logo-svg {
+            width: 38px;
+            height: 38px;
+            flex-shrink: 0;
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.6));
+        }
+        .nav-brand:hover .nav-logo-svg {
+            transform: scale(1.1);
+        }
+        .nav-brand-text {
+            font-size: 18px;
+            font-weight: 650;
+            letter-spacing: 0.02em;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            white-space: nowrap;
+        }
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+            list-style: none;
+            flex-shrink: 0;
+        }
+        .nav-links a {
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            color: #cbd5e1;
+            letter-spacing: 0.02em;
+            transition: color 0.3s, text-shadow 0.3s;
+            position: relative;
+        }
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--cyan);
+            box-shadow: 0 0 10px var(--cyan);
+            border-radius: 2px;
+            transition: width 0.3s var(--transition-smooth);
+        }
+        .nav-links a:hover {
+            color: #fff;
+            text-shadow: 0 0 8px rgba(0, 229, 255, 0.7);
+        }
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        .nav-cta {
+            background: rgba(0, 229, 255, 0.1);
+            border: 1px solid rgba(0, 229, 255, 0.4);
+            color: #fff;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.03em;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+            text-decoration: none;
+            backdrop-filter: blur(8px);
+        }
+        .nav-cta:hover {
+            background: rgba(0, 229, 255, 0.25);
+            border-color: var(--cyan);
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.5);
+            transform: translateY(-1px);
+        }
+
+        /* 移动端菜单 */
+        .nav-mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            z-index: 1001;
+        }
+        .nav-mobile-toggle span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: #e0e8f0;
+            margin: 5px 0;
+            border-radius: 2px;
+            transition: all 0.3s;
+            box-shadow: 0 0 6px rgba(0, 229, 255, 0.5);
+        }
+        .nav-mobile-toggle.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+        .nav-mobile-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+        .nav-mobile-toggle.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(5px, -5px);
+        }
+        @media (max-width: 768px) {
+            .nav-links {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 280px;
+                height: 100vh;
+                background: rgba(3, 5, 15, 0.95);
+                backdrop-filter: blur(30px);
+                flex-direction: column;
+                padding: 90px 32px 32px;
+                gap: 20px;
+                transition: right 0.4s var(--transition-smooth);
+                box-shadow: -4px 0 40px rgba(0, 0, 0, 0.8);
+                z-index: 999;
+                border-left: 1px solid rgba(0, 229, 255, 0.2);
+            }
+            .nav-links.active {
+                right: 0;
+            }
+            .nav-links a {
+                font-size: 17px;
+            }
+            .nav-mobile-toggle {
+                display: block;
+            }
+            .nav-cta.desktop-only {
+                display: none;
+            }
+        }
+        @media (min-width: 769px) {
+            .nav-cta.mobile-only {
+                display: none;
+            }
+        }
+
+        /* ============ Hero 区域 ============ */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: radial-gradient(circle at 30% 40%, #0a1424 0%, #02040c 80%);
+            overflow: hidden;
+            padding: 110px 24px 80px;
+            text-align: center;
+        }
+        .hero-grid {
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(0, 229, 255, 0.07) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 229, 255, 0.07) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: gridMove 20s linear infinite;
+            pointer-events: none;
+        }
+        @keyframes gridMove {
+            0% {
+                transform: perspective(500px) rotateX(60deg) translateY(0);
+            }
+            100% {
+                transform: perspective(500px) rotateX(60deg) translateY(50px);
+            }
+        }
+        .hero-bg-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 800px;
+            height: 800px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0, 229, 255, 0.12) 0%, rgba(212, 175, 55, 0.08) 35%, transparent 70%);
+            pointer-events: none;
+            animation: heroGlowPulse 7s ease-in-out infinite;
+        }
+        @keyframes heroGlowPulse {
+            0%,
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.6;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.25);
+                opacity: 0.9;
+            }
+        }
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 860px;
+        }
+        .hero-emblem {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+        .hero-logo-large {
+            width: 90px;
+            height: 90px;
+            animation: heroLogoReveal 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        @keyframes heroLogoReveal {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .hero-logo-large svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 0 25px rgba(212, 175, 55, 0.8));
+        }
+        .hero-flag {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            animation: heroFadeUp 1s 0.3s var(--transition-smooth) forwards;
+            opacity: 0;
+            transform: translateY(24px);
+        }
+        .hero-flag img {
+            width: 80px;
+            height: auto;
+            border-radius: 6px;
+            border: 2px solid rgba(212, 175, 55, 0.7);
+            box-shadow: 0 0 25px rgba(212, 175, 55, 0.5);
+            transition: all 0.4s;
+            background: #0a0f1a;
+        }
+        .flag-label {
+            font-size: 11px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #d4af37;
+            text-shadow: 0 0 8px rgba(212, 175, 55, 0.7);
+        }
+        .hero-badge {
+            display: inline-block;
+            padding: 6px 20px;
+            border-radius: 20px;
+            border: 1px solid rgba(0, 229, 255, 0.5);
+            color: var(--cyan);
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+            margin-bottom: 18px;
+            animation: heroFadeUp 1s 0.4s var(--transition-smooth) forwards;
+            opacity: 0;
+            transform: translateY(24px);
+            backdrop-filter: blur(8px);
+            background: rgba(0, 20, 40, 0.3);
+        }
+        @keyframes heroFadeUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .hero h1 {
+            font-size: clamp(48px, 8vw, 88px);
+            font-weight: 750;
+            letter-spacing: -0.03em;
+            color: #ffffff;
+            margin-bottom: 10px;
+            animation: heroFadeUp 1s 0.55s var(--transition-smooth) forwards;
+            opacity: 0;
+            transform: translateY(24px);
+            line-height: 1.08;
+            text-shadow: 0 0 30px rgba(0, 229, 255, 0.4);
+        }
+        .hero h1 .gold-text {
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline;
+            filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.7));
+        }
+        .hero-subtitle {
+            font-size: clamp(18px, 2.5vw, 28px);
+            font-weight: 400;
+            color: #b0c7d9;
+            letter-spacing: 0.02em;
+            margin-bottom: 10px;
+            animation: heroFadeUp 1s 0.7s var(--transition-smooth) forwards;
+            opacity: 0;
+            transform: translateY(24px);
+        }
+        .hero-desc {
+            font-size: 16px;
+            color: #7b8fa0;
+            max-width: 550px;
+            margin: 0 auto 40px;
+            animation: heroFadeUp 1s 0.8s var(--transition-smooth) forwards;
+            opacity: 0;
+            transform: translateY(24px);
+            line-height: 1.7;
+        }
+        .hero-cta-group {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: heroFadeUp 1s 0.9s var(--transition-smooth) forwards;
+            opacity: 0;
+            transform: translateY(24px);
+        }
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 32px;
+            border-radius: 28px;
+            font-size: 15px;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            cursor: pointer;
+            border: none;
+            text-decoration: none;
+            transition: all 0.35s var(--transition-smooth);
+            background: var(--accent-gradient);
+            color: #0a0f1a;
+            box-shadow: 0 4px 20px rgba(212, 175, 55, 0.4);
+        }
+        .btn-primary:hover {
+            box-shadow: 0 8px 32px rgba(212, 175, 55, 0.8);
+            transform: translateY(-3px);
+        }
+        .btn-outline {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 32px;
+            border-radius: 28px;
+            font-size: 15px;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+            cursor: pointer;
+            border: 1.5px solid rgba(0, 229, 255, 0.5);
+            text-decoration: none;
+            transition: all 0.35s var(--transition-smooth);
+            background: transparent;
+            color: #fff;
+            backdrop-filter: blur(10px);
+            background: rgba(0, 30, 50, 0.2);
+        }
+        .btn-outline:hover {
+            border-color: var(--cyan);
+            box-shadow: 0 0 30px rgba(0, 229, 255, 0.6);
+            transform: translateY(-2px);
+        }
+        .scroll-indicator {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: heroFadeUp 1s 1.2s var(--transition-smooth) forwards, bounceDown 2s 1.8s ease-in-out infinite;
+            opacity: 0;
+            z-index: 2;
+        }
+        @keyframes bounceDown {
+            0%,
+            100% {
+                transform: translateX(-50%) translateY(0);
+            }
+            50% {
+                transform: translateX(-50%) translateY(12px);
+            }
+        }
+        .scroll-indicator svg {
+            width: 30px;
+            height: 30px;
+            color: rgba(0, 229, 255, 0.6);
+            filter: drop-shadow(0 0 6px cyan);
+        }
+
+        /* ============ 时间线里程碑区域 ============ */
+        .milestone-section {
+            position: relative;
+            padding: 120px 24px;
+            background: #030712;
+            overflow: hidden;
+        }
+        .sky-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .plane {
+            position: absolute;
+            top: 20%;
+            left: -150px;
+            width: 120px;
+            height: auto;
+            opacity: 0;
+            transform: translateX(0);
+            transition: opacity 0.3s;
+            z-index: 2;
+        }
+        .plane.fly {
+            animation: planeFlyAcross 4s cubic-bezier(0.25, 0.1, 0.15, 1) forwards;
+            opacity: 1;
+        }
+        @keyframes planeFlyAcross {
+            0% {
+                left: -150px;
+                transform: translateY(0) rotate(0deg);
+            }
+            30% {
+                transform: translateY(-15px) rotate(-2deg);
+            }
+            70% {
+                transform: translateY(5px) rotate(1deg);
+            }
+            100% {
+                left: 110%;
+                transform: translateY(0) rotate(0deg);
+            }
+        }
+        .milestone-marker {
+            position: absolute;
+            top: 45%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+            z-index: 1;
+        }
+        .milestone-marker.reveal {
+            opacity: 1;
+        }
+        .time-badge {
+            font-family: 'SF Mono', 'Menlo', monospace;
+            font-size: 3rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            color: #fff;
+            text-shadow: 0 0 30px rgba(0, 229, 255, 0.8);
+            margin-bottom: 12px;
+        }
+        .time-desc {
+            font-size: 1.4rem;
+            color: #d4af37;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+        }
+
+        /* ============ 通用区块 ============ */
+        .section {
+            padding: 100px 24px;
+        }
+        .section-dark {
+            background: #02040c;
+        }
+        .section-light {
+            background: #050a14;
+        }
+        .section-gray {
+            background: #080d1a;
+        }
+        .section-inner {
+            max-width: var(--max-width);
+            margin: 0 auto;
+        }
+        .section-label {
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--cyan);
+            margin-bottom: 12px;
+            text-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+        }
+        .section-title {
+            font-size: clamp(36px, 5.5vw, 58px);
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            margin-bottom: 16px;
+            line-height: 1.12;
+            color: #fff;
+            text-shadow: 0 0 20px rgba(0, 229, 255, 0.3);
+        }
+        .section-desc {
+            font-size: 17px;
+            color: #8e9dab;
+            max-width: 640px;
+            line-height: 1.7;
+        }
+
+        /* ============ 产品卡片 ============ */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 28px;
+            margin-top: 50px;
+        }
+        @media (max-width: 480px) {
+            .products-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+        }
+        .product-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            border-radius: var(--radius-lg);
+            padding: 40px 32px 32px;
+            transition: all 0.45s var(--transition-smooth);
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid rgba(0, 229, 255, 0.12);
+            position: relative;
+            overflow: hidden;
+        }
+        .product-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            padding: 1px;
+            background: linear-gradient(135deg, rgba(0, 229, 255, 0.4), rgba(212, 175, 55, 0.3));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+        .product-card:hover::before {
+            opacity: 1;
+        }
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--card-hover-shadow);
+            border-color: rgba(0, 229, 255, 0.4);
+        }
+        .product-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            flex-shrink: 0;
+            background: rgba(0, 20, 30, 0.7);
+            border: 1px solid rgba(0, 229, 255, 0.5);
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.3);
+        }
+        .product-card h3 {
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+        .product-card .product-url {
+            font-size: 13px;
+            color: #5b7b8c;
+            font-family: 'SF Mono', monospace;
+            word-break: break-all;
+        }
+        .product-card .product-tag {
+            display: inline-block;
+            padding: 4px 14px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            background: rgba(0, 229, 255, 0.12);
+            color: var(--cyan);
+            align-self: flex-start;
+            border: 1px solid rgba(0, 229, 255, 0.25);
+        }
+        .product-arrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--cyan);
+            transition: gap 0.3s;
+            margin-top: auto;
+        }
+        .product-card:hover .product-arrow {
+            gap: 12px;
+        }
+
+        /* ============ 领导人卡片 ============ */
+        .leader-card {
+            display: flex;
+            align-items: center;
+            gap: 36px;
+            background: var(--bg-card);
+            backdrop-filter: blur(18px);
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            margin-top: 40px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid rgba(0, 229, 255, 0.15);
+            flex-wrap: wrap;
+        }
+        .leader-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            border: 3px solid #d4af37;
+            box-shadow: 0 0 35px rgba(212, 175, 55, 0.6);
+            overflow: hidden;
+            background: #0a0f1a;
+        }
+        .leader-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .leader-info h3 {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 4px;
+        }
+        .leader-info .leader-title {
+            font-size: 14px;
+            color: var(--cyan);
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+        .leader-info .leader-bio {
+            font-size: 15px;
+            color: #a0b5c5;
+            margin-top: 10px;
+            line-height: 1.7;
+        }
+
+        /* ============ 志向文章区块 ============ */
+        .article-card {
+            background: rgba(10, 18, 30, 0.5);
+            backdrop-filter: blur(12px);
+            border-radius: var(--radius-lg);
+            padding: 48px 40px;
+            border: 1px solid rgba(0, 229, 255, 0.12);
+            margin-top: 48px;
+            color: #d0dae5;
+            line-height: 1.8;
+            font-size: 17px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+        }
+        .article-card h3 {
+            font-size: 32px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 24px;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #f0da90, #00e5ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .article-card p {
+            margin-bottom: 20px;
+            text-indent: 2em;
+        }
+        .signature {
+            margin-top: 40px;
+            text-align: right;
+            font-style: italic;
+            color: #d4af37;
+            font-size: 20px;
+            font-weight: 500;
+        }
+
+        /* ============ 联系方式 ============ */
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+            gap: 24px;
+            margin-top: 40px;
+        }
+        .contact-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            border-radius: var(--radius-md);
+            padding: 28px 24px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid rgba(0, 229, 255, 0.1);
+            transition: all 0.35s var(--transition-smooth);
+            text-decoration: none;
+            color: inherit;
+        }
+        .contact-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 0 35px rgba(0, 229, 255, 0.3);
+            border-color: rgba(0, 229, 255, 0.4);
+        }
+        .contact-icon-wrap {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 24px;
+            background: rgba(0, 30, 40, 0.7);
+            border: 1px solid rgba(0, 229, 255, 0.4);
+        }
+        .contact-detail .contact-label {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--cyan);
+        }
+        .contact-detail .contact-value {
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            margin-top: 4px;
+            word-break: break-all;
+        }
+
+        /* ============ 页脚 ============ */
+        .footer {
+            background: #010308;
+            color: #5a6b7a;
+            padding: 40px 24px;
+            text-align: center;
+            font-size: 13px;
+            letter-spacing: 0.02em;
+            border-top: 1px solid rgba(0, 229, 255, 0.1);
+        }
+        .footer-logo svg {
+            width: 28px;
+            height: 28px;
+            filter: drop-shadow(0 0 8px gold);
+        }
+
+        /* ============ 滚动动画系统 ============ */
+        .anim-element {
+            opacity: 0;
+            transform: translateY(45px);
+            transition: opacity 0.8s cubic-bezier(0.2, 0.9, 0.3, 1), transform 0.8s cubic-bezier(0.2, 0.9, 0.3, 1);
+        }
+        .anim-element.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .anim-delay-1 {
+            transition-delay: 0.1s;
+        }
+        .anim-delay-2 {
+            transition-delay: 0.2s;
+        }
+        .anim-delay-3 {
+            transition-delay: 0.3s;
+        }
+        .anim-delay-4 {
+            transition-delay: 0.4s;
+        }
+        .anim-delay-5 {
+            transition-delay: 0.5s;
+        }
+        .anim-fade-left {
+            transform: translateX(-50px);
+        }
+        .anim-fade-right {
+            transform: translateX(50px);
+        }
+        .anim-fade-left.visible,
+        .anim-fade-right.visible {
+            transform: translateX(0);
+        }
+        .anim-scale {
+            transform: scale(0.88);
+        }
+        .anim-scale.visible {
+            transform: scale(1);
+        }
+
+        @media (max-width: 768px) {
+            .section {
+                padding: 60px 16px;
+            }
+            .hero {
+                padding: 80px 16px 60px;
+                min-height: 90vh;
+            }
+            .hero h1 {
+                font-size: 38px;
+            }
+            .hero-logo-large {
+                width: 70px;
+                height: 70px;
+            }
+            .hero-flag img {
+                width: 60px;
+            }
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+            .leader-card {
+                flex-direction: column;
+                text-align: center;
+                padding: 28px 20px;
+            }
+            .contact-grid {
+                grid-template-columns: 1fr;
+            }
+            .article-card {
+                padding: 30px 20px;
+                font-size: 15px;
+            }
+            .time-badge {
+                font-size: 2rem;
+            }
+            .time-desc {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 导航栏 -->
+    <nav class="navbar" id="navbar">
+        <div class="navbar-inner">
+            <a href="#" class="nav-brand">
+                <svg class="nav-logo-svg" viewBox="0 0 48 48" fill="none">
+                    <defs>
+                        <linearGradient id="logoGradNav" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#d4af37"/>
+                            <stop offset="50%" stop-color="#f9e076"/>
+                            <stop offset="100%" stop-color="#b8860b"/>
+                        </linearGradient>
+                        <filter id="logoGlowNav" x="-30%" y="-30%" width="160%" height="160%">
+                            <feGaussianBlur stdDeviation="1.2" result="blur"/>
+                            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                        </filter>
+                    </defs>
+                    <rect x="7" y="24" width="34" height="7" rx="3.5" fill="url(#logoGradNav)" filter="url(#logoGlowNav)"/>
+                    <polygon points="11,24 16,8 21,24" fill="url(#logoGradNav)" filter="url(#logoGlowNav)"/>
+                    <polygon points="19,24 24,2 29,24" fill="url(#logoGradNav)" filter="url(#logoGlowNav)"/>
+                    <polygon points="27,24 32,8 37,24" fill="url(#logoGradNav)" filter="url(#logoGlowNav)"/>
+                    <circle cx="24" cy="16" r="4" fill="#fff" opacity="0.9"/>
+                    <circle cx="24" cy="16" r="2.2" fill="#e0c878"/>
+                </svg>
+                <span class="nav-brand-text">极乐帝国</span>
+            </a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#products">产品</a></li>
+                <li><a href="#milestone">里程碑</a></li>
+                <li><a href="#leadership">领导</a></li>
+                <li><a href="#ambition">志向</a></li>
+                <li><a href="#contact">联系</a></li>
+                <li><a href="#contact" class="nav-cta mobile-only">联系</a></li>
+            </ul>
+            <a href="#contact" class="nav-cta desktop-only">取得联系</a>
+            <button class="nav-mobile-toggle" id="mobileToggle" aria-label="菜单">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero 区 -->
+    <section class="hero" id="hero">
+        <div class="hero-grid"></div>
+        <div class="hero-bg-glow"></div>
+        <div class="hero-content">
+            <div class="hero-emblem">
+                <div class="hero-logo-large">
+                    <svg viewBox="0 0 48 48" fill="none">
+                        <defs>
+                            <linearGradient id="logoGradHero" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#f0da90"/>
+                                <stop offset="50%" stop-color="#d4af37"/>
+                                <stop offset="100%" stop-color="#9a6d20"/>
+                            </linearGradient>
+                            <filter id="logoGlowHero" x="-40%" y="-40%" width="180%" height="180%">
+                                <feGaussianBlur stdDeviation="2" result="blur"/>
+                                <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                            </filter>
+                        </defs>
+                        <rect x="6" y="24" width="36" height="8" rx="4" fill="url(#logoGradHero)" filter="url(#logoGlowHero)"/>
+                        <polygon points="10,24 16,6 22,24" fill="url(#logoGradHero)" filter="url(#logoGlowHero)"/>
+                        <polygon points="19,24 25,1 31,24" fill="url(#logoGradHero)" filter="url(#logoGlowHero)"/>
+                        <polygon points="28,24 34,6 40,24" fill="url(#logoGradHero)" filter="url(#logoGlowHero)"/>
+                        <circle cx="25" cy="16" r="5" fill="#fff" opacity="0.9"/>
+                        <circle cx="25" cy="16" r="3" fill="#e8d080"/>
+                    </svg>
+                </div>
+                <div class="hero-flag">
+                    <img src="https://i.ibb.co/LzMMrPLJ/AA85-FDFF-D1-D5-475-E-981-C-20517-C216-FF4.png" alt="极乐帝国国旗" />
+                    <span class="flag-label">帝国国旗</span>
+                </div>
+            </div>
+            <span class="hero-badge">✦ 极乐帝国党 · 星际纪元 ✦</span>
+            <h1>极乐<span class="gold-text">帝国</span></h1>
+            <p class="hero-subtitle">跨越星辰，以科技重铸秩序</p>
+            <p class="hero-desc">在<strong style="color:#f0da90;">膏罪</strong>总书记的引领下，极乐帝国汇聚尖端科技，打造GChat、查单词等旗舰产品，连接无限宇宙。</p>
+            <div class="hero-cta-group">
+                <a href="#products" class="btn-primary">探索产品 →</a>
+                <a href="#milestone" class="btn-outline">⚡ 帝国里程碑</a>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 10l5 5 5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+    </section>
+
+    <!-- 里程碑：飞机飞过天空，时间节点 -->
+    <section class="milestone-section" id="milestone">
+        <div class="sky-container">
+            <!-- 飞机 SVG -->
+            <svg class="plane" id="plane" viewBox="0 0 100 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10 20 L30 8 L70 8 L90 2 L95 20 L90 38 L70 32 L30 32 L10 20 Z" fill="#00e5ff" opacity="0.9" filter="url(#planeGlow)"/>
+                <path d="M30 8 L25 2 L35 2 L30 8 Z" fill="#fff" opacity="0.8"/>
+                <defs>
+                    <filter id="planeGlow">
+                        <feGaussianBlur stdDeviation="2" result="blur"/>
+                        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                    </filter>
+                </defs>
+            </svg>
+            <div class="milestone-marker" id="milestoneMarker">
+                <div class="time-badge">2025.01.28</div>
+                <div class="time-desc">极乐集团 · 正式创始</div>
+            </div>
+        </div>
+        <div class="section-inner" style="position: relative; z-index: 3; text-align: center;">
+            <span class="section-label anim-element">帝国编年史</span>
+            <h2 class="section-title anim-element anim-delay-1">起源之光</h2>
+            <p class="section-desc anim-element anim-delay-2" style="margin:0 auto;">极乐集团诞生于2025年1月28日，自此开启了跨越维度的征途。</p>
+        </div>
+    </section>
+
+    <!-- 产品展示区 -->
+    <section class="section section-gray" id="products">
+        <div class="section-inner">
+            <span class="section-label anim-element">产品矩阵</span>
+            <h2 class="section-title anim-element anim-delay-1">旗舰科技品牌</h2>
+            <p class="section-desc anim-element anim-delay-2">源自极乐帝国的核心创新，每一款产品都定义未来。</p>
+            <div class="products-grid">
+                <a href="https://ztr.gaozui.cc.cd/chat" target="_blank" rel="noopener" class="product-card anim-element anim-delay-2 anim-fade-left">
+                    <div class="product-icon">
+                        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#00e5ff" stroke-width="2.2"><rect x="3" y="4" width="18" height="14" rx="3"/><path d="M7 16l-2 3h14l-2-3"/><circle cx="9" cy="11" r="1.5" fill="#00e5ff"/><circle cx="15" cy="11" r="1.5" fill="#00e5ff"/></svg>
+                    </div>
+                    <span class="product-tag">⚡ 通讯中枢</span>
+                    <h3>GChat</h3>
+                    <p style="color:#8e9dab;font-size:14px;">量子加密即时通讯，超光速信息传输。</p>
+                    <span class="product-url">ztr.gaozui.cc.cd/chat</span>
+                    <span class="product-arrow">接入网络 →</span>
+                </a>
+                <a href="https://gaozui.us.ci" target="_blank" rel="noopener" class="product-card anim-element anim-delay-3 anim-fade-right">
+                    <div class="product-icon">
+                        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#00e5ff" stroke-width="2.2"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="7" x2="16" y2="7"/><line x1="8" y1="11" x2="14" y2="11"/><circle cx="17" cy="17" r="3.5"/><line x1="19.5" y1="19.5" x2="22" y2="22"/></svg>
+                    </div>
+                    <span class="product-tag">📡 知识引擎</span>
+                    <h3>查单词</h3>
+                    <p style="color:#8e9dab;font-size:14px;">全息词库·毫秒响应，掌握宇宙通用语。</p>
+                    <span class="product-url">gaozui.us.ci</span>
+                    <span class="product-arrow">启动查询 →</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 领导人与愿景 -->
+    <section class="section section-light" id="leadership">
+        <div class="section-inner">
+            <span class="section-label anim-element">领导核心</span>
+            <h2 class="section-title anim-element anim-delay-1">帝国领航者</h2>
+            <p class="section-desc anim-element anim-delay-2">在膏罪总书记的卓越指挥下，极乐帝国正驶向星辰大海。</p>
+            <div class="leader-card anim-element anim-delay-3 anim-scale">
+                <div class="leader-avatar">
+                    <img src="https://i.ibb.co/bM4GtWjd/IMG-9797.jpg" alt="膏罪总书记" loading="lazy" />
+                </div>
+                <div class="leader-info">
+                    <span class="leader-title">极乐帝国党总书记</span>
+                    <h3>膏罪</h3>
+                    <p class="leader-bio">作为帝国的精神领袖与战略设计师，膏罪同志将深邃的科技洞察与坚定的意志注入每一个产品。从GChat的星际通讯到查单词的知识矩阵，极乐帝国正在重塑数字文明的边界。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 六年级毕业志向文章 -->
+    <section class="section section-dark" id="ambition">
+        <div class="section-inner">
+            <span class="section-label anim-element">少年志向</span>
+            <h2 class="section-title anim-element anim-delay-1">致未来的帝国公民</h2>
+            <p class="section-desc anim-element anim-delay-2">来自六年级毕业生的宣言，星辰大海始于足下。</p>
+            <div class="article-card anim-element anim-delay-3">
+                <h3>✧ 启航 · 极乐纪元 ✧</h3>
+                <p>今天，我小学毕业了。六年的时光如同流星划过天际，短暂却璀璨。站在人生的第一个里程碑前，我心中涌动的不仅是对过去的怀念，更是对未来的无限憧憬。极乐集团，这个诞生于2025年1月28日的梦想共同体，正如我一样年轻、充满可能。</p>
+                <p>我们这一代人，生在数字与星辰交汇的时代。当别人还在仰望星空时，极乐帝国已经着手建造通往宇宙的桥梁。GChat让沟通跨越光年，查单词让知识不再有边界。我梦想着有一天，也能成为这伟大事业的一部分，用代码书写传奇，用创新定义未来。</p>
+                <p>六年级毕业不是结束，而是新征程的起点。就像极乐集团从零开始，一步步构建起自己的科技疆土，我也将从今天出发，去探索、去创造、去征服。也许十年后，我会站在极乐帝国的舰桥上，回望今天这个写下志向的少年，然后微笑着说：我做到了。</p>
+                <p>极乐帝国，不仅仅是一个品牌，它是一种信念——只要心怀宇宙，哪里都是边疆。膏罪总书记说：“创新是帝国的灵魂。”而我想说，少年的志向，就是帝国最明亮的星辰。</p>
+                <div class="signature">—— 六年级毕业生 · 未来的帝国建设者</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 联系方式 -->
+    <section class="section section-dark" id="contact">
+        <div class="section-inner">
+            <span class="section-label anim-element" style="color:#00e5ff;">通讯频道</span>
+            <h2 class="section-title anim-element anim-delay-1">联系我们</h2>
+            <p class="section-desc anim-element anim-delay-2" style="color:#9aa9b7;">通过以下加密频道与帝国建立联系。</p>
+            <div class="contact-grid">
+                <div class="contact-card anim-element anim-delay-3 anim-fade-left">
+                    <div class="contact-icon-wrap" style="color:#2e7d32;">📡</div>
+                    <div class="contact-detail">
+                        <span class="contact-label">微信</span>
+                        <span class="contact-value">gaoyuhao201312</span>
+                    </div>
+                </div>
+                <div class="contact-card anim-element anim-delay-4 anim-fade-right">
+                    <div class="contact-icon-wrap" style="color:#1565c0;">🛰️</div>
+                    <div class="contact-detail">
+                        <span class="contact-label">QQ</span>
+                        <span class="contact-value">3667620968</span>
+                    </div>
+                </div>
+            </div>
+            <div style="margin-top:40px;display:flex;flex-wrap:wrap;gap:14px;justify-content:center;" class="anim-element anim-delay-5">
+                <a href="https://gaozui.us.ci" target="_blank" class="btn-outline">📖 查单词 · gaozui.us.ci</a>
+                <a href="https://ztr.gaozui.cc.cd/chat" target="_blank" class="btn-outline">💬 GChat · ztr.gaozui.cc.cd/chat</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-logo">
+                <svg viewBox="0 0 48 48" fill="none"><rect x="7" y="24" width="34" height="7" rx="3" fill="#d4af37"/><polygon points="11,24 16,8 21,24" fill="#d4af37"/><polygon points="19,24 24,2 29,24" fill="#d4af37"/><polygon points="27,24 32,8 37,24" fill="#d4af37"/><circle cx="24" cy="16" r="3" fill="#fff"/></svg>
+                <span style="color:#d4af37;">极乐帝国</span>
+            </div>
+            <p>© 2026 极乐帝国党 · 膏罪总书记领导 · 星际纪元</p>
+            <p style="font-size:11px;opacity:0.45;">极乐集团创始于2025年1月28日</p>
+        </div>
+    </footer>
+
+    <script>
+        (function() {
+            const navbar = document.getElementById('navbar');
+            const mobileToggle = document.getElementById('mobileToggle');
+            const navLinks = document.getElementById('navLinks');
+
+            function updateNavbar() {
+                if (window.scrollY > 30) navbar.classList.add('scrolled');
+                else navbar.classList.remove('scrolled');
+            }
+            window.addEventListener('scroll', updateNavbar, { passive: true });
+            updateNavbar();
+
+            mobileToggle.addEventListener('click', () => {
+                mobileToggle.classList.toggle('active');
+                navLinks.classList.toggle('active');
+            });
+            navLinks.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileToggle.classList.remove('active');
+                    navLinks.classList.remove('active');
+                });
+            });
+
+            // 滚动动画观察器
+            const animElements = document.querySelectorAll('.anim-element');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) entry.target.classList.add('visible');
+                });
+            }, { rootMargin: '0px 0px -50px 0px', threshold: 0.12 });
+            animElements.forEach(el => observer.observe(el));
+
+            // 里程碑飞机动画触发
+            const milestoneSection = document.getElementById('milestone');
+            const plane = document.getElementById('plane');
+            const marker = document.getElementById('milestoneMarker');
+            let planeFlown = false;
+
+            const milestoneObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && !planeFlown) {
+                        planeFlown = true;
+                        // 触发飞机飞行
+                        plane.classList.add('fly');
+                        // 延时显示时间标记
+                        setTimeout(() => {
+                            marker.classList.add('reveal');
+                        }, 800);
+                    }
+                });
+            }, { threshold: 0.3 });
+
+            if (milestoneSection) milestoneObserver.observe(milestoneSection);
+
+            // 产品卡片3D倾斜效果
+            if (window.innerWidth > 768) {
+                document.querySelectorAll('.product-card').forEach(card => {
+                    card.addEventListener('mousemove', function(e) {
+                        const rect = card.getBoundingClientRect();
+                        const x = e.clientX - rect.left;
+                        const y = e.clientY - rect.top;
+                        const centerX = rect.width / 2;
+                        const centerY = rect.height / 2;
+                        const rotateX = ((y - centerY) / centerY) * -4;
+                        const rotateY = ((x - centerX) / centerX) * 4;
+                        card.style.transform =
+                            `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-8px)`;
+                    });
+                    card.addEventListener('mouseleave', function() {
+                        card.style.transform =
+                            'perspective(800px) rotateX(0deg) rotateY(0deg) translateY(0px)';
+                    });
+                });
+            }
+
+            // 平滑滚动
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    const target = document.querySelector(targetId);
+                    if (target) {
+                        e.preventDefault();
+                        const navHeight = navbar.offsetHeight;
+                        window.scrollTo({
+                            top: target.getBoundingClientRect().top + window.pageYOffset - navHeight -
+                                20,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        })();
+    </script>
+</body>
+</html>
